@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bank DApp | Assignment 6</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #edf2f7;
+        color: #162e46;
+        font:
+          16px/1.7 system-ui,
+          sans-serif;
+      }
+      main {
+        max-width: 820px;
+        margin: 48px auto;
+        padding: 0 20px;
+      }
+      header {
+        margin-bottom: 24px;
+      }
+      h1 {
+        font-size: 40px;
+        margin: 8px 0;
+      }
+      h2 {
+        font-size: 20px;
+        margin-top: 0;
+      }
+      .tag {
+        letter-spacing: 3px;
+        font-size: 12px;
+        color: #477367;
+      }
+      section {
+        background: white;
+        border: 1px solid #dae2e9;
+        border-radius: 18px;
+        padding: 26px;
+        margin: 18px 0;
+        box-shadow: 0 8px 30px #1232;
+      }
+      label {
+        display: block;
+        margin: 12px 0 6px;
+      }
+      input,
+      button {
+        font: inherit;
+        border-radius: 9px;
+        padding: 12px;
+        width: 100%;
+      }
+      input {
+        border: 1px solid #bdcbd7;
+      }
+      button {
+        cursor: pointer;
+        background: #166d5b;
+        border: 0;
+        color: white;
+        margin-top: 12px;
+      }
+      button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      .balance {
+        font-size: 36px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+      }
+      small {
+        color: #566c7f;
+      }
+      #status,
+      #account,
+      #tx {
+        overflow-wrap: anywhere;
+      }
+      #status {
+        white-space: pre-wrap;
+      }
+      #tx {
+        font-size: 13px;
+      }
+      footer {
+        padding: 12px 0 32px;
+        color: #566c7f;
+      }
+      @media (max-width: 550px) {
+        .row {
+          grid-template-columns: 1fr;
+        }
+        main {
+          margin-top: 24px;
+        }
+        h1 {
+          font-size: 32px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <span class="tag">ASSIGNMENT 06 · SEPOLIA TESTNET</span>
+        <h1>ธนาคารบนบล็อกเชน</h1>
+        <p>ฝาก ถอน และตรวจสอบยอดเงินของคุณผ่าน Smart Contract</p>
+        <!-- แก้ข้อมูลนักศึกษาสองรายการนี้ก่อนส่งงาน -->
+        <div>รหัสนักศึกษา: <strong>66080740</strong></div>
+        <div>ชื่อ–สกุล: <strong>วรรณษา วงค์ดี</strong></div>
+      </header>
+      <section>
+        <h2>1. เชื่อมต่อบัญชี</h2>
+        <small>ใช้ MetaMask บนเครือข่าย Sepolia และใช้ ETH ทดสอบ</small>
+        <p id="account">ยังไม่ได้เชื่อมต่อ</p>
+        <button id="connect">เชื่อมต่อ MetaMask</button>
+        <p>ไม่ต้องกรอกแอดเดรสกระเป๋า ระบบจะอ่านบัญชีที่คุณอนุญาตจาก MetaMask</p>
+        <label for="address">Contract Address ของ Bank จาก Remix (ไม่ใช่แอดเดรสกระเป๋า)</label
+        ><input
+          id="address"
+          placeholder="0x..."
+          autocomplete="off"
+          spellcheck="false"
+        /><button id="load" disabled>โหลดสัญญา Bank</button>
+        <small>หากยังไม่มีสัญญา ให้ Deploy Bank.sol บน Sepolia แล้วคัดลอกแอดเดรสจาก Deployed Contracts ใน Remix</small>
+      </section>
+      <section>
+        <h2>ยอดฝากของบัญชีนี้ใน Bank</h2>
+        <div class="balance"><span id="balance">—</span> ETH</div>
+        <button id="check" disabled>CheckBlance — ตรวจสอบยอดเงิน</button>
+      </section>
+      <div class="row">
+        <section>
+          <h2>2. ฝากเงิน</h2>
+          <label for="depositAmount">จำนวน ETH</label
+          ><input
+            id="depositAmount"
+            inputmode="decimal"
+            placeholder="0.01"
+          /><button id="deposit" disabled>Deposit — ฝากเงิน</button>
+        </section>
+        <section>
+          <h2>3. ถอนเงิน</h2>
+          <label for="withdrawAmount">จำนวน ETH</label
+          ><input
+            id="withdrawAmount"
+            inputmode="decimal"
+            placeholder="0.005"
+          /><button id="withdraw" disabled>Withdraw — ถอนเงิน</button>
+        </section>
+      </div>
+      <section aria-live="polite">
+        <h2>สถานะ</h2>
+        <div id="status">กดเชื่อมต่อ MetaMask ก่อน โดยไม่ต้องกรอกแอดเดรสกระเป๋า</div>
+        <p id="tx"></p>
+      </section>
+      <footer>
+        Bank DApp · ยอดเงินนี้คือยอดฝากในสัญญา ไม่ใช่ยอดคงเหลือในกระเป๋า
+      </footer>
+    </main>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
